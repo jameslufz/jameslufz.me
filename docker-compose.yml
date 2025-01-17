@@ -1,0 +1,35 @@
+services:
+  app:
+    container_name: app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./src:/app/src
+    restart: unless-stopped
+    env_file:
+      - .env
+      - .env.local
+    environment:
+      - NEXT_PUBLIC_NODE_ENV=production
+      - NODE_ENV=production
+    ports:
+      - 3000:3000
+    networks:
+      - webNetwork
+
+  webserver:
+    container_name: ws
+    image: nginx:latest
+    volumes:
+      - ./conf.d:/etc/nginx/conf.d
+      - ./ssl:/etc/nginx/ssl
+    depends_on:
+      - app
+    ports:
+      - 80:80
+      - 443:443
+
+  networks:
+    default:
+      driver: bridge
