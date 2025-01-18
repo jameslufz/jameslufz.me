@@ -10,3 +10,17 @@ body {
   @apply bg-zinc-950 text-white;
   font-family: var(--font-noto-sans-thai);
 }
+
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 0;
+  border: none;
+}
+
+*::-webkit-scrollbar-track {
+  @apply bg-zinc-950 !border-none;
+}
+
+*::-webkit-scrollbar-thumb {
+  @apply bg-zinc-900 border-none rounded-xl;
+}
