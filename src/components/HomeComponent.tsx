@@ -12,10 +12,12 @@ type IHomeComponentImageListProps = {
 }
 type IHomeComponentProps = {
     imageList: IHomeComponentImageListProps[]
+    avatar: string
+    avatarPlaceholder: string
 }
 type IHomeComponent = (props: IHomeComponentProps) => ReactElement
 
-const HomeComponent: IHomeComponent = ({ imageList }) =>
+const HomeComponent: IHomeComponent = ({ imageList, avatar, avatarPlaceholder }) =>
 {
     const [show, setShow] = useState<boolean>(false)
     useEffect(() => {
@@ -40,11 +42,11 @@ const HomeComponent: IHomeComponent = ({ imageList }) =>
         <div className="w-full h-full mx-auto flex flex-col justify-between gap-4 pt-10 pb-4">
             <div className="w-full h-full flex flex-col items-center justify-center gap-4">
                 <div className="inline-flex items-center gap-2">
-                    <Image src={imageList[0].imageUrl} width={1046} height={1394} alt="วัชวิศ วิริยะธรรม" placeholder="blur" blurDataURL={imageList[0].imageBlurUrl} className="w-80 h-80 animate-pulse object-cover rounded-full cursor-pointer hover:scale-110 scale-100 transition-all duration-300" onClick={() => setShow(true)} />
+                    <Image src={avatar} width={1046} height={1394} alt="วัชวิศ วิริยะธรรม" placeholder="blur" blurDataURL={avatarPlaceholder} className="w-80 h-80 animate-pulse object-cover rounded-full cursor-pointer hover:scale-110 scale-100 transition-all duration-300" onClick={() => setShow(true)} />
                 </div>
-                <div className="py-6">
-                    <h2 className="text-center text-xl font-light leading-loose">ไม่มีอะไรครับ ผมแค่</h2>
-                    <h1 className="text-center text-4xl">อยากไปกางเต็นท์โว้ย !</h1>
+                <div className="py-6 flex flex-col gap-2">
+                    <h2 className="text-center text-base tracking-widest font-light leading-loose uppercase opacity-65">A full stack web developer</h2>
+                    <h1 className="text-center text-4xl">Joury Memory Logs</h1>
                 </div>
             </div>
 
