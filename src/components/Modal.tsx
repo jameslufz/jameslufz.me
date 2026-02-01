@@ -24,7 +24,7 @@ const Modal = ({ children, isShow, onClose }:{ children: ReactNode, isShow: bool
                             onClick={onClose}
                         >
                         </motion.div>
-                        <div className="w-full h-full max-w-screen-sm relative top-0 left-1/2 -translate-x-1/2 overflow-scroll z-30 modal-content">
+                        <div className="w-full h-full max-w-(--breakpoint-sm) relative top-0 left-1/2 -translate-x-1/2 overflow-scroll z-30 modal-content">
                             {children}
                         </div>
                     </motion.div>
