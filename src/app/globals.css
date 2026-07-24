@@ -45,3 +45,24 @@ body {
 *::-webkit-scrollbar-thumb {
   @apply bg-zinc-900 border-none rounded-xl;
 }
+
+body {
+    background-image: radial-gradient(ellipse 90% 55% at 50% 0%, rgba(63, 63, 70, 0.28), transparent 70%);
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+
+@keyframes avatar-glow {
+    0%, 100% {
+        opacity: 0.35;
+        transform: translate(-50%, -50%) scale(1);
+    }
+    50% {
+        opacity: 0.65;
+        transform: translate(-50%, -50%) scale(1.08);
+    }
+}
+
+.avatar-glow {
+    animation: avatar-glow 5s ease-in-out infinite;
+}
