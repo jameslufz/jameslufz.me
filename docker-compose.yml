@@ -12,3 +12,7 @@ services:
       - NODE_ENV=production
     networks:
       - lufz-network
+
+networks:
+  lufz-network:
+    external: true
