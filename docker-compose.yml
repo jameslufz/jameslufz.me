@@ -10,7 +10,5 @@ services:
     environment:
       - NEXT_PUBLIC_NODE_ENV=production
       - NODE_ENV=production
-
-networks:
-  lufz-network:
-    external: true
+    networks:
+      - lufz-network
