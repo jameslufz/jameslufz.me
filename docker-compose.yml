@@ -1,30 +1,16 @@
 services:
-  app:
-    container_name: app
+  jameslufz:
+    container_name: jameslufz
     build:
       context: .
       dockerfile: Dockerfile
     volumes:
       - ./src:/app/src
-    restart: unless-stopped
+    restart: always
     environment:
       - NEXT_PUBLIC_NODE_ENV=production
       - NODE_ENV=production
-    ports:
-      - 3000:3000
-
-  webserver:
-    container_name: ws
-    image: nginx:latest
-    volumes:
-      - ./conf.d:/etc/nginx/conf.d
-      - ./ssl:/etc/nginx/ssl
-    depends_on:
-      - app
-    ports:
-      - 80:80
-      - 443:443
 
 networks:
-  default:
+  lufz-network:
     driver: bridge
