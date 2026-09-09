@@ -1,11 +1,7 @@
 services:
   jameslufz:
+    image: ghcr.io/jameslufz/jameslufz.me:latest
     container_name: jameslufz
-    build:
-      context: .
-      dockerfile: Dockerfile
-    volumes:
-      - ./src:/app/src
     restart: always
     environment:
       - NEXT_PUBLIC_NODE_ENV=production
