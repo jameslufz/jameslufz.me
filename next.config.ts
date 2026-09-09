@@ -25,6 +25,7 @@ const nextConfig: NextConfig = {
     async headers() {
         return headersConfig
     },
+    output: "standalone",
     compress: true,
     compiler: {
         removeConsole: process.env.NODE_ENV === "production",
