@@ -12,13 +12,13 @@ type IHomeParallaxImageProps = {
 }
 type IHomeParallaxProps = {
     imageList: IHomeParallaxImageProps[]
-    avatar: string
     avatarPlaceholder: string
 }
 type IHomeParallax = (props: IHomeParallaxProps) => ReactElement
 
 const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1]
 const DATE_PATTERN = /\d{1,2}\/\d{1,2}\/\d{4}/
+const TECH_STACK = ["TypeScript", "Next.js", "Nest.js", "Vue.js", "Golang", "PHP", "MySQL", "PostgreSQL", "MongoDB", "Redis", "DigitalOcean", "Alibaba Cloud"]
 
 const ParallaxFrame = ({ image, index, reverse }: { image: IHomeParallaxImageProps, index: number, reverse: boolean }): ReactElement =>
 {
@@ -48,7 +48,7 @@ const ParallaxFrame = ({ image, index, reverse }: { image: IHomeParallaxImagePro
                         priority={index === 0}
                     />
                 </motion.div>
-                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/10" />
+                <div className="pointer-events-none absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-black/10" />
                 <div className="grain-overlay pointer-events-none absolute inset-0" />
             </div>
 
@@ -72,7 +72,7 @@ const ParallaxFrame = ({ image, index, reverse }: { image: IHomeParallaxImagePro
     )
 }
 
-const HomeParallax: IHomeParallax = ({ imageList, avatar, avatarPlaceholder }) =>
+const HomeParallax: IHomeParallax = ({ imageList, avatarPlaceholder }) =>
 {
     const heroRef = useRef<HTMLDivElement>(null)
     const { scrollYProgress: heroProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] })
@@ -88,7 +88,7 @@ const HomeParallax: IHomeParallax = ({ imageList, avatar, avatarPlaceholder }) =
         <main className="relative w-full overflow-clip bg-zinc-950">
             <motion.div
                 style={{ scaleX: pageProgress }}
-                className="fixed left-0 top-0 z-50 h-[2px] w-full origin-left bg-linear-to-r from-zinc-400 via-white to-zinc-400"
+                className="fixed left-0 top-0 z-50 h-0.5 w-full origin-left bg-linear-to-r from-zinc-400 via-white to-zinc-400"
             />
 
             <section ref={heroRef} className="relative flex h-screen w-full flex-col items-center justify-center overflow-hidden">
@@ -104,7 +104,7 @@ const HomeParallax: IHomeParallax = ({ imageList, avatar, avatarPlaceholder }) =
                         priority
                     />
                 </motion.div>
-                <div className="absolute inset-0 bg-gradient-to-b from-zinc-950/40 via-zinc-950/70 to-zinc-950" />
+                <div className="absolute inset-0 bg-linear-to-b from-zinc-950/40 via-zinc-950/70 to-zinc-950" />
                 <div className="grain-overlay pointer-events-none absolute inset-0" />
 
                 <motion.div style={{ opacity: heroOpacity }} className="relative flex flex-col items-center gap-4">
@@ -115,9 +115,9 @@ const HomeParallax: IHomeParallax = ({ imageList, avatar, avatarPlaceholder }) =
                         transition={{ duration: 0.8, ease: EASE }}
                         className="relative flex items-center justify-center py-4"
                     >
-                        <div className="avatar-glow pointer-events-none absolute left-1/2 top-1/2 size-96 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,_rgba(228,228,231,0.18)_0%,_transparent_65%)] blur-2xl" />
+                        <div className="avatar-glow pointer-events-none absolute left-1/2 top-1/2 size-96 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-linear(circle,rgba(228,228,231,0.18)_0%,transparent_65%)] blur-2xl" />
                         <Image
-                            src={avatar}
+                            src="/profile/1.jpg"
                             width={1046}
                             height={1394}
                             alt="วัชวิศ วิริยะธรรม"
@@ -154,10 +154,69 @@ const HomeParallax: IHomeParallax = ({ imageList, avatar, avatarPlaceholder }) =
             </section>
 
             <section className="relative mx-auto flex w-full max-w-5xl flex-col px-6 md:px-10">
-                <div className="pointer-events-none absolute inset-y-0 left-1/2 hidden w-px -translate-x-1/2 bg-gradient-to-b from-transparent via-zinc-600/70 to-transparent md:block" />
+                <div className="pointer-events-none absolute inset-y-0 left-1/2 hidden w-px -translate-x-1/2 bg-linear-to-b from-transparent via-zinc-600/70 to-transparent md:block" />
                 {imageList.map((image, i) => (
                     <ParallaxFrame key={i} image={image} index={i} reverse={i % 2 === 1} />
                 ))}
+            </section>
+
+            <section className="relative mx-auto flex w-full max-w-3xl flex-col items-center gap-8 px-6 py-24 text-center md:flex-row md:justify-center md:gap-16 md:py-32 md:text-left">
+                <motion.div
+                    initial={{ opacity: 0, scale: 0.92 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    viewport={{ once: true, amount: 0.5 }}
+                    transition={{ duration: 0.8, ease: EASE }}
+                    className="relative shrink-0"
+                >
+                    <div className="avatar-glow pointer-events-none absolute left-1/2 top-1/2 size-72 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-linear(circle,rgba(228,228,231,0.16)_0%,transparent_65%)] blur-2xl" />
+                    <Image
+                        src="/profile/2.jpg"
+                        width={1046}
+                        height={1394}
+                        alt="James Lufz"
+                        placeholder="blur"
+                        blurDataURL={avatarPlaceholder}
+                        className="relative size-48 rounded-full object-cover shadow-2xl shadow-black/60 ring-1 ring-white/10 sm:size-56"
+                    />
+                </motion.div>
+
+                <motion.div
+                    initial={{ opacity: 0, y: 24 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, amount: 0.5 }}
+                    transition={{ duration: 0.8, delay: 0.15, ease: EASE }}
+                    className="flex flex-col items-center gap-3 md:items-start"
+                >
+                    <span className="font-mono text-[10px] tracking-[0.4em] text-zinc-500">AKA</span>
+                    <h2 className="text-4xl font-semibold tracking-tight bg-linear-to-b from-white to-zinc-400 bg-clip-text text-transparent sm:text-5xl">James Lufz</h2>
+                    <span className="h-px w-10 bg-linear-to-r from-transparent via-zinc-500 to-transparent md:from-zinc-500 md:via-zinc-700 md:to-transparent" />
+                </motion.div>
+            </section>
+
+            <section className="relative mx-auto flex w-full max-w-4xl flex-col items-center gap-10 px-6 py-16 md:py-24">
+                <motion.span
+                    initial={{ opacity: 0, y: 12 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, amount: 0.6 }}
+                    transition={{ duration: 0.6, ease: EASE }}
+                    className="font-mono text-[10px] tracking-[0.4em] text-zinc-500"
+                >
+                    TECH STACK • DEVOPS
+                </motion.span>
+                <div className="flex flex-wrap items-center justify-center gap-3">
+                    {TECH_STACK.map((tech, i) => (
+                        <motion.span
+                            key={tech}
+                            initial={{ opacity: 0, y: 12 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true, amount: 0.6 }}
+                            transition={{ duration: 0.5, delay: i * 0.04, ease: EASE }}
+                            className="rounded-full border border-white/10 bg-white/3 px-5 py-2 text-xs tracking-[0.15em] text-zinc-300 backdrop-blur-sm transition-colors hover:border-white/25 hover:text-white"
+                        >
+                            {tech}
+                        </motion.span>
+                    ))}
+                </div>
             </section>
 
             <footer className="relative z-40 flex w-full flex-col items-center gap-3 bg-zinc-950 py-20">

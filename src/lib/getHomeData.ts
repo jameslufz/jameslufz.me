@@ -16,7 +16,7 @@ export type IHomeData = {
 
 export async function getHomeData(): Promise<IHomeData>
 {
-    const avatarPath = "/san-pa-kia-1.jpg"
+    const avatarPath = "/profile/2.jpg"
     const avatartPathFull = "./public" + avatarPath
 
     const kewMaePanPath = "/kiw-mae-pan.jpg"
