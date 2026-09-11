@@ -2,6 +2,10 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
     title: "Self Introduction — James Lufz",
+    robots: {
+        index: false,
+        follow: false,
+    },
 };
 
 export default function SelfIntroductionPage() {

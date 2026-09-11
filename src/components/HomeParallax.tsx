@@ -2,7 +2,7 @@
 
 import Image from "next/image"
 import { motion, useScroll, useTransform } from "motion/react"
-import { ReactElement, useRef } from "react"
+import { ReactElement, useEffect, useRef, useState } from "react"
 
 type IHomeParallaxImageProps = {
     imageUrl: string
@@ -20,7 +20,7 @@ const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1]
 const DATE_PATTERN = /\d{1,2}\/\d{1,2}\/\d{4}/
 const TECH_STACK = ["TypeScript", "Next.js", "Nest.js", "Vue.js", "Golang", "PHP", "MySQL", "PostgreSQL", "MongoDB", "Redis", "DigitalOcean", "Alibaba Cloud"]
 
-const ParallaxFrame = ({ image, index, reverse }: { image: IHomeParallaxImageProps, index: number, reverse: boolean }): ReactElement =>
+const ParallaxFrame = ({ image, index, reverse, onOpen }: { image: IHomeParallaxImageProps, index: number, reverse: boolean, onOpen: () => void }): ReactElement =>
 {
     const ref = useRef<HTMLDivElement>(null)
     const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] })
@@ -34,7 +34,12 @@ const ParallaxFrame = ({ image, index, reverse }: { image: IHomeParallaxImagePro
     return (
         <div ref={ref} className="relative flex w-full flex-col items-center gap-10 py-28 md:grid md:grid-cols-[1fr_auto_1fr] md:items-center md:gap-x-8 md:py-40">
             <div
-                className={`relative h-[60vh] w-full overflow-hidden rounded-3xl shadow-2xl shadow-black/60 ring-1 ring-white/10 md:row-start-1 md:h-[70vh] ${reverse ? "md:col-start-3" : "md:col-start-1"}`}
+                role="button"
+                tabIndex={0}
+                onClick={onOpen}
+                onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onOpen() } }}
+                aria-label={`เปิดดูรูปเต็ม: ${image.topic}`}
+                className={`group relative h-[60vh] w-full cursor-zoom-in overflow-hidden rounded-3xl shadow-2xl shadow-black/60 ring-1 ring-white/10 md:row-start-1 md:h-[70vh] ${reverse ? "md:col-start-3" : "md:col-start-1"}`}
             >
                 <motion.div style={{ y: imageY }} className="absolute inset-[-8%]">
                     <Image
@@ -50,6 +55,18 @@ const ParallaxFrame = ({ image, index, reverse }: { image: IHomeParallaxImagePro
                 </motion.div>
                 <div className="pointer-events-none absolute inset-0 bg-linear-to-t from-black/60 via-transparent to-black/10" />
                 <div className="grain-overlay pointer-events-none absolute inset-0" />
+                <div className="pointer-events-none absolute inset-0 flex items-center justify-center bg-black/0 transition-colors duration-300 group-hover:bg-black/25">
+                    <svg
+                        className="size-9 text-white opacity-0 transition-opacity duration-300 group-hover:opacity-90"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="1.5"
+                    >
+                        <circle cx="11" cy="11" r="7" />
+                        <path d="M21 21l-4.35-4.35M11 8v6M8 11h6" strokeLinecap="round" />
+                    </svg>
+                </div>
             </div>
 
             <div className="relative hidden h-full md:col-start-2 md:row-start-1 md:flex md:items-center md:justify-center">
@@ -77,12 +94,35 @@ const HomeParallax: IHomeParallax = ({ imageList, avatarPlaceholder }) =>
     const heroRef = useRef<HTMLDivElement>(null)
     const { scrollYProgress: heroProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] })
     const { scrollYProgress: pageProgress } = useScroll()
+    const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
 
     const bgY = useTransform(heroProgress, [0, 1], ["0%", "35%"])
     const bgScale = useTransform(heroProgress, [0, 1], [1.1, 1.3])
     const avatarY = useTransform(heroProgress, [0, 1], [0, -60])
     const heroTextY = useTransform(heroProgress, [0, 1], [0, -140])
     const heroOpacity = useTransform(heroProgress, [0, 0.8], [1, 0])
+
+    useEffect(() =>
+    {
+        if (lightboxIndex === null) return
+
+        const originalOverflow = document.body.style.overflow
+        document.body.style.overflow = "hidden"
+
+        const onKeyDown = (e: KeyboardEvent) =>
+        {
+            if (e.key === "Escape") setLightboxIndex(null)
+            if (e.key === "ArrowRight") setLightboxIndex((i) => i === null ? i : (i + 1) % imageList.length)
+            if (e.key === "ArrowLeft") setLightboxIndex((i) => i === null ? i : (i - 1 + imageList.length) % imageList.length)
+        }
+        window.addEventListener("keydown", onKeyDown)
+
+        return () =>
+        {
+            document.body.style.overflow = originalOverflow
+            window.removeEventListener("keydown", onKeyDown)
+        }
+    }, [lightboxIndex, imageList.length])
 
     return (
         <main className="relative w-full overflow-clip bg-zinc-950">
@@ -115,7 +155,7 @@ const HomeParallax: IHomeParallax = ({ imageList, avatarPlaceholder }) =>
                         transition={{ duration: 0.8, ease: EASE }}
                         className="relative flex items-center justify-center py-4"
                     >
-                        <div className="avatar-glow pointer-events-none absolute left-1/2 top-1/2 size-96 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-linear(circle,rgba(228,228,231,0.18)_0%,transparent_65%)] blur-2xl" />
+                        <div className="avatar-glow pointer-events-none absolute left-1/2 top-1/2 size-96 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(228,228,231,0.18)_0%,transparent_65%)] blur-2xl" />
                         <Image
                             src="/profile/1.jpg"
                             width={1046}
@@ -156,7 +196,7 @@ const HomeParallax: IHomeParallax = ({ imageList, avatarPlaceholder }) =>
             <section className="relative mx-auto flex w-full max-w-5xl flex-col px-6 md:px-10">
                 <div className="pointer-events-none absolute inset-y-0 left-1/2 hidden w-px -translate-x-1/2 bg-linear-to-b from-transparent via-zinc-600/70 to-transparent md:block" />
                 {imageList.map((image, i) => (
-                    <ParallaxFrame key={i} image={image} index={i} reverse={i % 2 === 1} />
+                    <ParallaxFrame key={i} image={image} index={i} reverse={i % 2 === 1} onOpen={() => setLightboxIndex(i)} />
                 ))}
             </section>
 
@@ -168,7 +208,7 @@ const HomeParallax: IHomeParallax = ({ imageList, avatarPlaceholder }) =>
                     transition={{ duration: 0.8, ease: EASE }}
                     className="relative shrink-0"
                 >
-                    <div className="avatar-glow pointer-events-none absolute left-1/2 top-1/2 size-72 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-linear(circle,rgba(228,228,231,0.16)_0%,transparent_65%)] blur-2xl" />
+                    <div className="avatar-glow pointer-events-none absolute left-1/2 top-1/2 size-72 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(228,228,231,0.16)_0%,transparent_65%)] blur-2xl" />
                     <Image
                         src="/profile/2.jpg"
                         width={1046}
@@ -224,6 +264,71 @@ const HomeParallax: IHomeParallax = ({ imageList, avatarPlaceholder }) =>
                 <p className="text-center text-[10px] font-light uppercase tracking-[0.25em] text-zinc-600">From</p>
                 <p className="text-center text-sm font-light tracking-[0.2em] text-zinc-300">Watchawit Wiriyatham</p>
             </footer>
+
+            {lightboxIndex !== null && (
+                <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    onClick={() => setLightboxIndex(null)}
+                    className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 p-4 backdrop-blur-sm sm:p-10"
+                >
+                    <button
+                        onClick={(e) => { e.stopPropagation(); setLightboxIndex(null) }}
+                        aria-label="ปิด"
+                        className="absolute right-4 top-4 rounded-full border border-white/15 bg-white/5 p-2.5 text-zinc-300 transition-colors hover:text-white sm:right-8 sm:top-8"
+                    >
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                            <path d="M6 6l12 12M18 6L6 18" strokeLinecap="round" />
+                        </svg>
+                    </button>
+
+                    {imageList.length > 1 && (
+                        <>
+                            <button
+                                onClick={(e) => { e.stopPropagation(); setLightboxIndex((i) => i === null ? i : (i - 1 + imageList.length) % imageList.length) }}
+                                aria-label="รูปก่อนหน้า"
+                                className="absolute left-2 top-1/2 -translate-y-1/2 rounded-full border border-white/15 bg-white/5 p-2.5 text-zinc-300 transition-colors hover:text-white sm:left-6"
+                            >
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                                    <path d="M15 6l-6 6 6 6" strokeLinecap="round" strokeLinejoin="round" />
+                                </svg>
+                            </button>
+                            <button
+                                onClick={(e) => { e.stopPropagation(); setLightboxIndex((i) => i === null ? i : (i + 1) % imageList.length) }}
+                                aria-label="รูปถัดไป"
+                                className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full border border-white/15 bg-white/5 p-2.5 text-zinc-300 transition-colors hover:text-white sm:right-6"
+                            >
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                                    <path d="M9 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
+                                </svg>
+                            </button>
+                        </>
+                    )}
+
+                    <motion.div
+                        key={lightboxIndex}
+                        initial={{ opacity: 0, scale: 0.96 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ duration: 0.3, ease: EASE }}
+                        onClick={(e) => e.stopPropagation()}
+                        className="relative flex h-full max-h-[85vh] w-full max-w-5xl flex-col items-center gap-4"
+                    >
+                        <div className="relative h-full w-full">
+                            <Image
+                                src={imageList[lightboxIndex].imageUrl}
+                                fill
+                                placeholder="blur"
+                                blurDataURL={imageList[lightboxIndex].imageBlurUrl}
+                                alt={imageList[lightboxIndex].topic}
+                                sizes="100vw"
+                                className="object-contain"
+                            />
+                        </div>
+                        <p className="text-center text-xs tracking-[0.2em] text-zinc-400">{imageList[lightboxIndex].topic}</p>
+                    </motion.div>
+                </motion.div>
+            )}
         </main>
     )
 }

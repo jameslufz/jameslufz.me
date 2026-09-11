@@ -16,11 +16,8 @@ const headersConfig = (process.env.NODE_ENV === "production" ?
 )
 const nextConfig: NextConfig = {
     images: {
-        unoptimized: true,
-        remotePatterns: [
-            { protocol: "https", hostname: "**" },
-        ],
-        minimumCacheTTL: 60 * 60 * 24,
+        formats: ["image/avif", "image/webp"],
+        minimumCacheTTL: 60 * 60 * 24 * 365,
     },
     async headers() {
         return headersConfig
